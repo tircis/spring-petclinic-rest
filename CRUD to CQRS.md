@@ -26,3 +26,8 @@ I had some doubt about the test implementation in `PetRestControllerTests.testAd
 - let's disable `testGetAllPetsNotFound()` because we have data now.
 
 => Good news ! all tests pass ... except `PetRestControllerTests.testAddPetSuccess()` which fails with a 404 error. 
+
+Digging (debugging) into the problem shows a database constraint violation because the entry (the new Pet) lacks an ownerId, it also shows that it go through an update instead of an insert, because of the presence of an id on the new Pet. Those 2 elements are pretty interesting because it highlights some mistakes in the contract of the API :
+- the ownerId is optional
+- the id is allowed on a new instance
+  Let's fix the test by having a dedicated Pet instance and make the test pass, then we'll be back to our Command conversion.

@@ -229,14 +229,35 @@ class PetRestControllerTests {
     @Test
     @WithMockUser(roles = "OWNER_ADMIN")
     void testAddPetSuccess() throws Exception {
-        PetDto newPet = pets.get(0);
+
+        Owner owner = clinicService.findOwnerById(1);
+        PetType dogType = clinicService.findPetTypeById(2);
+        PetTypeDto petType = petMapper.toPetTypeDto(dogType);
+
+        PetDto newPet = new PetDto();
+        LocalDate today = LocalDate.of(2025,4,1);
+        newPet
+            .name("Rex")
+            .birthDate(today)
+            .type(petType)
+            .ownerId(owner.getId())
+            // let's add some visit because it's allowed by the current contract, we'll see further if it makes sense or not
+            .addVisitsItem(new VisitDto()
+                .description("my first visit")
+                .date(today.plusDays(3))
+                .petId(newPet.getId()));
+
         ObjectMapper mapper = new ObjectMapper();
         mapper.registerModule(new JavaTimeModule());
         String newPetAsJSON = mapper.writeValueAsString(newPet);
         this.mockMvc.perform(post("/api/pets")
                 .content(newPetAsJSON).accept(MediaType.APPLICATION_JSON_VALUE).contentType(MediaType.APPLICATION_JSON_VALUE))
             .andExpect(status().isCreated())
-            .andExpect(header().string(HttpHeaders.LOCATION, "/api/pets/3"));
+            .andExpect(header().string(HttpHeaders.LOCATION, "/api/pets/14"));
+
+        this.mockMvc.perform(get("/api/pets/14")
+                .accept(MediaType.APPLICATION_JSON))
+            .andExpect(content().string("{\"name\":\"Rex\",\"birthDate\":[2025,4,1],\"type\":{\"name\":\"dog\",\"id\":2},\"id\":14,\"ownerId\":1,\"visits\":[]}"));
     }
 
     @Test
