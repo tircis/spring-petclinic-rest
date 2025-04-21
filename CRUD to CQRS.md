@@ -1,4 +1,3 @@
-
 # Example 1
 We'll start by transforming the update Pet feature to a CQRS pattern, because the input requires fewer data than the one sent.
 Here's the initial implementation:
@@ -12,3 +11,18 @@ Here's the initial implementation:
 - Defining UpdatePetCommandDto class with only id, name, birthDate and type fields (copy / paste from PetDto to avoid misses on field validation + useless code removal : extra fields (visits, ownerId), equals(..) + hashcode())
 
 Please note that the UpdateCommandDto.id field is now mandatory.
+
+# Example 2
+Next one is the "Add Pet" feature.
+Looking at the Front-End, the pet-add.component.html doesn't have any reference to the pet visits, meaning that end users can't create a Pet and creates a visit for him at the same time.
+Whereas the Back-End PetRestController does. Here we have the phenomenon of the automatic exposure of too many attributes to the extra world but outer people don't use them. It certainly have created an extra work during implementation (due to the Visit mapping and persistence) and will do again if we amend the domain entities.
+
+# Changes
+I had some doubt about the test implementation in `PetRestControllerTests.testAddPetSuccess()` because, when dealing with insertion some rules apply differently than when updating entities, and particularly the test doesn't mock clinicService.savePet(). Hopefully the test class is close to an e2e test and in can be converted to such one with few modifications:
+- replace `@MockedBean` by `@Autowired` on the `clinicService` field
+- remove all `given(..)` applied to `clinicService`
+- add `@ActiveProfiles({"jdbc", "hsqldb"})` on top of the class
+- add `@Transactional` on top of the class to make test methods rollback their database modifications and avoid test dependencies
+- let's disable `testGetAllPetsNotFound()` because we have data now.
+
+=> Good news ! all tests pass ... except `PetRestControllerTests.testAddPetSuccess()` which fails with a 404 error. 
