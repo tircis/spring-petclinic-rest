@@ -22,6 +22,7 @@ import jakarta.validation.constraints.Min;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.samples.petclinic.rest.dto.AddPetCommandDto;
 import org.springframework.samples.petclinic.rest.dto.UpdatePetCommandDto;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -81,7 +82,7 @@ public interface PetsApi {
     )
 
     default ResponseEntity<PetDto> addPet(
-        @Parameter(name = "PetDto", description = "The pet", required = true) @Valid @RequestBody PetDto petDto
+        @Parameter(name = "PetDto", description = "The pet", required = true) @Valid @RequestBody AddPetCommandDto petDto
     ) {
         getRequest().ifPresent(request -> {
             for (MediaType mediaType: MediaType.parseMediaTypes(request.getHeader("Accept"))) {

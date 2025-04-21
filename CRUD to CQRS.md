@@ -31,3 +31,14 @@ Digging (debugging) into the problem shows a database constraint violation becau
 - the ownerId is optional
 - the id is allowed on a new instance
   Let's fix the test by having a dedicated Pet instance and make the test pass, then we'll be back to our Command conversion.
+
+After this preamble, let's go further and apply the same methodology as in example 1
+- let's create a `AddPetCommandDto` based on `PetDto`
+    - we know that it requires an ownerId, therefore we adapt the annotations to make it mandatory and pass its type to int
+    - we know that it doesn't require an id therefore we remove it
+    - from the test, we see that visits are not taken into account by the service and not persisted so we can remove them too
+- make this DTO used by the Controller: change the argument from `PetDto` to `AddPetCommandDto`.
+- make the Controller use a new command handler named `AddPetCommandHandler`. The previous algorithm was based on the monolithic Mapper to create a Pet entity from the DTO, but since we know that some fields are not necessary or even absent the mapping will be lighter and we make our own directly in the handler.
+
+The test still passes.
+=> the contract is lighter and more precise.

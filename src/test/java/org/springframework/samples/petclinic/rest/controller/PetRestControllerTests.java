@@ -37,6 +37,7 @@ import org.springframework.samples.petclinic.mapper.PetMapper;
 import org.springframework.samples.petclinic.model.Owner;
 import org.springframework.samples.petclinic.model.PetType;
 import org.springframework.samples.petclinic.rest.advice.ExceptionControllerAdvice;
+import org.springframework.samples.petclinic.rest.dto.AddPetCommandDto;
 import org.springframework.samples.petclinic.rest.dto.OwnerDto;
 import org.springframework.samples.petclinic.rest.dto.PetDto;
 import org.springframework.samples.petclinic.rest.dto.PetTypeDto;
@@ -234,18 +235,13 @@ class PetRestControllerTests {
         PetType dogType = clinicService.findPetTypeById(2);
         PetTypeDto petType = petMapper.toPetTypeDto(dogType);
 
-        PetDto newPet = new PetDto();
+        AddPetCommandDto newPet = new AddPetCommandDto();
         LocalDate today = LocalDate.of(2025,4,1);
         newPet
             .name("Rex")
             .birthDate(today)
             .type(petType)
-            .ownerId(owner.getId())
-            // let's add some visit because it's allowed by the current contract, we'll see further if it makes sense or not
-            .addVisitsItem(new VisitDto()
-                .description("my first visit")
-                .date(today.plusDays(3))
-                .petId(newPet.getId()));
+            .ownerId(owner.getId());
 
         ObjectMapper mapper = new ObjectMapper();
         mapper.registerModule(new JavaTimeModule());
