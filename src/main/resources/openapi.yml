@@ -923,7 +923,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/Pet'
+              $ref: '#/components/schemas/UpdatePetCommandDto'
         required: true
       responses:
         200:
@@ -2043,6 +2043,24 @@ components:
             - id
             - type
             - visits
+    UpdatePetCommandDto:
+      title: Pet
+      description: A pet.
+      allOf:
+        - $ref: '#/components/schemas/PetFields'
+        - type: object
+          properties:
+            id:
+              title: ID
+              description: The ID of the pet.
+              type: integer
+              format: int32
+              minimum: 0
+              example: 1
+              readOnly: true
+          required:
+            - id
+            - type
     VetFields:
       title: VetFields
       description: Editable fields of a veterinarian.
