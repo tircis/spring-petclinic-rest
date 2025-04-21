@@ -24,7 +24,6 @@ import java.util.List;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
-import org.hamcrest.Matchers;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
@@ -41,7 +40,6 @@ import org.springframework.samples.petclinic.rest.dto.AddPetCommandDto;
 import org.springframework.samples.petclinic.rest.dto.OwnerDto;
 import org.springframework.samples.petclinic.rest.dto.PetDto;
 import org.springframework.samples.petclinic.rest.dto.PetTypeDto;
-import org.springframework.samples.petclinic.rest.dto.VisitDto;
 import org.springframework.samples.petclinic.service.ClinicService;
 import org.springframework.samples.petclinic.service.clinicService.ApplicationTestConfig;
 import org.springframework.security.test.context.support.WithMockUser;
@@ -52,7 +50,6 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.transaction.annotation.Transactional;
 
-import static org.mockito.BDDMockito.given;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -64,7 +61,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 
 /**
- * Test class for {@link PetRestController}
+ * Test class for {@link PetWriteController}
  *
  * @author Vitaliy Fedoriv
  */
@@ -79,7 +76,9 @@ class PetRestControllerTests {
     @Autowired
     protected ClinicService clinicService;
     @Autowired
-    private PetRestController petRestController;
+    private PetWriteController petWriteController;
+    @Autowired
+    private PetReadController petReadController;
     @Autowired
     private PetMapper petMapper;
     private MockMvc mockMvc;
@@ -88,7 +87,7 @@ class PetRestControllerTests {
 
     @BeforeEach
     void initPets() {
-        this.mockMvc = MockMvcBuilders.standaloneSetup(petRestController)
+        this.mockMvc = MockMvcBuilders.standaloneSetup(petWriteController, petReadController)
             .setControllerAdvice(new ExceptionControllerAdvice())
             .build();
         pets = new ArrayList<>();

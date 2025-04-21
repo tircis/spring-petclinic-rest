@@ -36,7 +36,7 @@ import org.springframework.samples.petclinic.rest.dto.ProblemDetailDto;
 @Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2025-03-25T10:14:13.839343600+01:00[Europe/Paris]", comments = "Generator version: 7.12.0")
 @Validated
 @Tag(name = "pet", description = "Endpoints related to pets.")
-public interface PetsApi {
+public interface PetsWriteApi {
 
     default Optional<NativeWebRequest> getRequest() {
         return Optional.empty();
@@ -181,128 +181,6 @@ public interface PetsApi {
         return new ResponseEntity<>(HttpStatus.NOT_IMPLEMENTED);
 
     }
-
-
-    /**
-     * GET /pets/{petId} : Get a pet by ID
-     * Returns the pet  or a 404 error.
-     *
-     * @param petId The ID of the pet. (required)
-     * @return Pet details found and returned. (status code 200)
-     *         or Not modified. (status code 304)
-     *         or Bad request. (status code 400)
-     *         or Pet not found. (status code 404)
-     *         or Server error. (status code 500)
-     */
-    @Operation(
-        operationId = "getPet",
-        summary = "Get a pet by ID",
-        description = "Returns the pet  or a 404 error.",
-        tags = { "pet" },
-        responses = {
-            @ApiResponse(responseCode = "200", description = "Pet details found and returned.", content = {
-                @Content(mediaType = "application/json", schema = @Schema(implementation = PetDto.class))
-            }),
-            @ApiResponse(responseCode = "304", description = "Not modified."),
-            @ApiResponse(responseCode = "400", description = "Bad request.", content = {
-                @Content(mediaType = "application/json", schema = @Schema(implementation = ProblemDetailDto.class))
-            }),
-            @ApiResponse(responseCode = "404", description = "Pet not found.", content = {
-                @Content(mediaType = "application/json", schema = @Schema(implementation = ProblemDetailDto.class))
-            }),
-            @ApiResponse(responseCode = "500", description = "Server error.", content = {
-                @Content(mediaType = "application/json", schema = @Schema(implementation = ProblemDetailDto.class))
-            })
-        }
-    )
-    @RequestMapping(
-        method = RequestMethod.GET,
-        value = "/pets/{petId}",
-        produces = { "application/json" }
-    )
-
-    default ResponseEntity<PetDto> getPet(
-        @Min(0) @Parameter(name = "petId", description = "The ID of the pet.", required = true, in = ParameterIn.PATH) @PathVariable("petId") Integer petId
-    ) {
-        getRequest().ifPresent(request -> {
-            for (MediaType mediaType: MediaType.parseMediaTypes(request.getHeader("Accept"))) {
-                if (mediaType.isCompatibleWith(MediaType.valueOf("application/json"))) {
-                    String exampleString = "{ \"visits\" : [ { \"date\" : \"2013-01-01\", \"petId\" : 1, \"description\" : \"rabies shot\", \"id\" : 1 }, { \"date\" : \"2013-01-01\", \"petId\" : 1, \"description\" : \"rabies shot\", \"id\" : 1 } ], \"name\" : \"Leo\", \"id\" : 1, \"type\" : { \"name\" : \"cat\", \"id\" : 1 }, \"ownerId\" : 1, \"birthDate\" : \"2010-09-07\" }";
-                    ApiUtil.setExampleResponse(request, "application/json", exampleString);
-                    break;
-                }
-                if (mediaType.isCompatibleWith(MediaType.valueOf("application/json"))) {
-                    String exampleString = "{ \"schemaValidationErrors\" : [ { \"message\" : \"[Path '/lastName'] Instance type (null) does not match any allowed primitive type (allowed: ['string'])\" }, { \"message\" : \"[Path '/lastName'] Instance type (null) does not match any allowed primitive type (allowed: ['string'])\" } ], \"detail\" : \"No static resource api/owner.\", \"type\" : \"http://localhost:9966/petclinic/api/owner\", \"title\" : \"NoResourceFoundException\", \"status\" : 500, \"timestamp\" : \"2024-11-23T13:59:21.3820407Z\" }";
-                    ApiUtil.setExampleResponse(request, "application/json", exampleString);
-                    break;
-                }
-                if (mediaType.isCompatibleWith(MediaType.valueOf("application/json"))) {
-                    String exampleString = "{ \"schemaValidationErrors\" : [ { \"message\" : \"[Path '/lastName'] Instance type (null) does not match any allowed primitive type (allowed: ['string'])\" }, { \"message\" : \"[Path '/lastName'] Instance type (null) does not match any allowed primitive type (allowed: ['string'])\" } ], \"detail\" : \"No static resource api/owner.\", \"type\" : \"http://localhost:9966/petclinic/api/owner\", \"title\" : \"NoResourceFoundException\", \"status\" : 500, \"timestamp\" : \"2024-11-23T13:59:21.3820407Z\" }";
-                    ApiUtil.setExampleResponse(request, "application/json", exampleString);
-                    break;
-                }
-                if (mediaType.isCompatibleWith(MediaType.valueOf("application/json"))) {
-                    String exampleString = "{ \"schemaValidationErrors\" : [ { \"message\" : \"[Path '/lastName'] Instance type (null) does not match any allowed primitive type (allowed: ['string'])\" }, { \"message\" : \"[Path '/lastName'] Instance type (null) does not match any allowed primitive type (allowed: ['string'])\" } ], \"detail\" : \"No static resource api/owner.\", \"type\" : \"http://localhost:9966/petclinic/api/owner\", \"title\" : \"NoResourceFoundException\", \"status\" : 500, \"timestamp\" : \"2024-11-23T13:59:21.3820407Z\" }";
-                    ApiUtil.setExampleResponse(request, "application/json", exampleString);
-                    break;
-                }
-            }
-        });
-        return new ResponseEntity<>(HttpStatus.NOT_IMPLEMENTED);
-
-    }
-
-
-    /**
-     * GET /pets : Lists pet
-     * Returns an array of pet .
-     *
-     * @return Pet types found and returned. (status code 200)
-     *         or Not modified. (status code 304)
-     *         or Server error. (status code 500)
-     */
-    @Operation(
-        operationId = "listPets",
-        summary = "Lists pet",
-        description = "Returns an array of pet .",
-        tags = { "pet" },
-        responses = {
-            @ApiResponse(responseCode = "200", description = "Pet types found and returned.", content = {
-                @Content(mediaType = "application/json", array = @ArraySchema(schema = @Schema(implementation = PetDto.class)))
-            }),
-            @ApiResponse(responseCode = "304", description = "Not modified."),
-            @ApiResponse(responseCode = "500", description = "Server error.", content = {
-                @Content(mediaType = "application/json", schema = @Schema(implementation = ProblemDetailDto.class))
-            })
-        }
-    )
-    @RequestMapping(
-        method = RequestMethod.GET,
-        value = "/pets",
-        produces = { "application/json" }
-    )
-
-    default ResponseEntity<List<PetDto>> listPets(
-
-    ) {
-        getRequest().ifPresent(request -> {
-            for (MediaType mediaType: MediaType.parseMediaTypes(request.getHeader("Accept"))) {
-                if (mediaType.isCompatibleWith(MediaType.valueOf("application/json"))) {
-                    String exampleString = "[ { \"visits\" : [ { \"date\" : \"2013-01-01\", \"petId\" : 1, \"description\" : \"rabies shot\", \"id\" : 1 }, { \"date\" : \"2013-01-01\", \"petId\" : 1, \"description\" : \"rabies shot\", \"id\" : 1 } ], \"name\" : \"Leo\", \"id\" : 1, \"type\" : { \"name\" : \"cat\", \"id\" : 1 }, \"ownerId\" : 1, \"birthDate\" : \"2010-09-07\" }, { \"visits\" : [ { \"date\" : \"2013-01-01\", \"petId\" : 1, \"description\" : \"rabies shot\", \"id\" : 1 }, { \"date\" : \"2013-01-01\", \"petId\" : 1, \"description\" : \"rabies shot\", \"id\" : 1 } ], \"name\" : \"Leo\", \"id\" : 1, \"type\" : { \"name\" : \"cat\", \"id\" : 1 }, \"ownerId\" : 1, \"birthDate\" : \"2010-09-07\" } ]";
-                    ApiUtil.setExampleResponse(request, "application/json", exampleString);
-                    break;
-                }
-                if (mediaType.isCompatibleWith(MediaType.valueOf("application/json"))) {
-                    String exampleString = "{ \"schemaValidationErrors\" : [ { \"message\" : \"[Path '/lastName'] Instance type (null) does not match any allowed primitive type (allowed: ['string'])\" }, { \"message\" : \"[Path '/lastName'] Instance type (null) does not match any allowed primitive type (allowed: ['string'])\" } ], \"detail\" : \"No static resource api/owner.\", \"type\" : \"http://localhost:9966/petclinic/api/owner\", \"title\" : \"NoResourceFoundException\", \"status\" : 500, \"timestamp\" : \"2024-11-23T13:59:21.3820407Z\" }";
-                    ApiUtil.setExampleResponse(request, "application/json", exampleString);
-                    break;
-                }
-            }
-        });
-        return new ResponseEntity<>(HttpStatus.NOT_IMPLEMENTED);
-
-    }
-
 
     /**
      * PUT /pets/{petId} : Update a pet by ID

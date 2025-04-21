@@ -62,3 +62,25 @@ There are no benefits to transform Pet read operations because its returned clas
   - create a local inner class `FoundPetDto` to hold the Pet data: it only contains a `name` field because the Front-End only uses that
 - change `OwnersApi.java` to make `listOwners` take a `FoundOwnerDto` instead of an `OwnerDto`
 - change `OwnerRestController.java` to make it map the result of the search to `FoundOwnerDto` instead of `OwnerDto`. This requires the implementation of the mapping into the `OwnerMapper` class, which is quite simple.
+
+# Implementing Segregation
+Previously, we enhanced come write and read operations. However those actions are still in the same Controller and package but the CQRS Pattern emphasises on the necessity to separate those actions, here are some benefits:
+- code responsibility enhancement
+- intention clarification
+- avoid model mixing
+- prepare for scale-up
+- improve testability
+
+So, we're going to separate the Pet read and write operations as an exercise.
+
+# Changes
+- make a copy of the existing `PetRestController` class, and name it `PetReadController`
+- rename `PetRestController` to `PetWriteController`
+- remove write methods from `PetReadController`, remove read methods from `PetWriteController`
+- Notice that `CommandHanlder`s are no more necessary into `PetReadController`, neither `ClinicService` into `PetWriteController` we makes all this lighter and more unit-testable
+- do all this for `PetsRestApi`, you will end up with a `PetsWriteApi` and a `PetsReadApi` implemented by our controllers accordingly.
+- to ensure that we broke nothing, go to PetRestControllerTest and add a `@Autowired PetReadController` field and give it to the `MockMvcBuilders.standaloneSetup(..)` method. Run the tests, they are all green !
+
+Next step can be to move the read and write controllers to some dedicated packages. The `CommandDto`s, `Command`s and `CommandHandler`s can follow the write Controller. By doing it you will clearly separate the actions.
+
+Meanwhile, here we implemented a Separation of the Commands and Queries, a step further would be o go for a Segregation, by moving the read and write channels to some separate Maven modules. But the code is not ready for it because we still depend on the same domain entities. Transforming them is another story ...
