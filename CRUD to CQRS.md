@@ -42,3 +42,12 @@ After this preamble, let's go further and apply the same methodology as in examp
 
 The test still passes.
 => the contract is lighter and more precise.
+
+# Making the Command Pattern appears
+Until now, we only changed input to make them lighter, and we chose a naming convention based on "command". Let's go a bit further and make the Command Pattern appears officially by creating 2 simple interfaces:
+- `Command` is a simple marking interface (aka without any method) indicating that the class implementing it are just ... a command
+- `CommandHandler` is an interface that defines the method to handle a command. It takes a command as a parameter and returns an optional result
+  We make our classes implement them accordingly.
+
+Often, the question about the necessity to create DTOs that mirror business `Command`s arises because it seems excessive. However, considering the delete Web operation, we see that we can hardly have a DTO for it since it takes only one integer as parameter, therefore, if you want to embrace the Command pattern on your domain, you have to convert it as a `DeleteCommand`.
+Then, for consistency, it makes sense to convert all `Controller` inputs (DTOs, primitive values) to business `Commands`. The overhead is minimal since `Command` objects are typically simple, and you can use your IDE's features to help with the mapping. If writing the conversion code still feels burdensome, you can employ a Mapper framework to assist with this task.

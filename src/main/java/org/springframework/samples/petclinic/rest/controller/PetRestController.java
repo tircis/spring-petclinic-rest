@@ -25,8 +25,12 @@ import org.springframework.samples.petclinic.rest.api.PetsApi;
 import org.springframework.samples.petclinic.rest.dto.AddPetCommandDto;
 import org.springframework.samples.petclinic.rest.dto.PetDto;
 import org.springframework.samples.petclinic.rest.dto.UpdatePetCommandDto;
+import org.springframework.samples.petclinic.service.AddPetCommand;
 import org.springframework.samples.petclinic.service.AddPetCommandHandler;
 import org.springframework.samples.petclinic.service.ClinicService;
+import org.springframework.samples.petclinic.service.DeleteCommandHandler;
+import org.springframework.samples.petclinic.service.DeletePetCommand;
+import org.springframework.samples.petclinic.service.UpdatePetCommand;
 import org.springframework.samples.petclinic.service.UpdatePetCommandHandler;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.transaction.annotation.Transactional;
@@ -53,15 +57,18 @@ public class PetRestController implements PetsApi {
 
     private final UpdatePetCommandHandler updatePetCommandHandler;
     private final AddPetCommandHandler addPetCommandHandler;
+    private final DeleteCommandHandler deleteCommandHandler;
 
     public PetRestController(ClinicService clinicService,
                              PetMapper petMapper,
                              UpdatePetCommandHandler updatePetCommandHandler,
-                             AddPetCommandHandler addPetCommandHandler) {
+                             AddPetCommandHandler addPetCommandHandler,
+                             DeleteCommandHandler deleteCommandHandler) {
         this.clinicService = clinicService;
         this.petMapper = petMapper;
         this.updatePetCommandHandler = updatePetCommandHandler;
         this.addPetCommandHandler = addPetCommandHandler;
+        this.deleteCommandHandler = deleteCommandHandler;
     }
 
     @PreAuthorize("hasRole(@roles.OWNER_ADMIN)")
@@ -88,7 +95,7 @@ public class PetRestController implements PetsApi {
     @PreAuthorize("hasRole(@roles.OWNER_ADMIN)")
     @Override
     public ResponseEntity<PetDto> updatePet(Integer petId, UpdatePetCommandDto petDto) {
-        Pet currentPet = updatePetCommandHandler.execute(petDto);
+        Pet currentPet = updatePetCommandHandler.execute(new UpdatePetCommand(petDto.getId(), petDto.getName(), petDto.getBirthDate(), petDto.getType().getId()));
         if (currentPet == null) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
@@ -98,18 +105,17 @@ public class PetRestController implements PetsApi {
     @PreAuthorize("hasRole(@roles.OWNER_ADMIN)")
     @Override
     public ResponseEntity<PetDto> deletePet(Integer petId) {
-        Pet pet = this.clinicService.findPetById(petId);
+        Pet pet = deleteCommandHandler.execute(new DeletePetCommand(petId));
         if (pet == null) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
-        this.clinicService.deletePet(pet);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
     @PreAuthorize("hasRole(@roles.OWNER_ADMIN)")
     @Override
     public ResponseEntity<PetDto> addPet(AddPetCommandDto petDto) {
-        Pet newPet = addPetCommandHandler.execute(petDto);
+        Pet newPet = addPetCommandHandler.execute(new AddPetCommand(petDto.getName(), petDto.getBirthDate(), petDto.getType().getId(), petDto.getOwnerId()));
         HttpHeaders headers = new HttpHeaders();
         headers.setLocation(UriComponentsBuilder.newInstance().path("/api/pets/{id}").buildAndExpand(newPet.getId()).toUri());
         return new ResponseEntity<>(petMapper.toPetDto(newPet), headers, HttpStatus.CREATED);

@@ -2,42 +2,33 @@ package org.springframework.samples.petclinic.service;
 
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.samples.petclinic.mapper.PetMapper;
-import org.springframework.samples.petclinic.model.Owner;
 import org.springframework.samples.petclinic.model.Pet;
-import org.springframework.samples.petclinic.rest.dto.AddPetCommandDto;
 import org.springframework.stereotype.Component;
 
 @Component
-public class AddPetCommandHandler {
+public class AddPetCommandHandler implements CommandHandler<AddPetCommand, Pet> {
 
     private final ClinicService clinicService;
-    private final PetMapper petMapper;
 
     @Autowired
-    public AddPetCommandHandler(ClinicService clinicService, PetMapper petMapper) {
+    public AddPetCommandHandler(ClinicService clinicService) {
         this.clinicService = clinicService;
-        this.petMapper = petMapper;
     }
 
     @Transactional
-    public Pet execute(AddPetCommandDto addPetCommandDto) {
-        Pet pet = toPet(addPetCommandDto);
+    @Override
+    public Pet execute(AddPetCommand addPetCommand) {
+        Pet pet = toPet(addPetCommand);
         this.clinicService.savePet(pet);
         return pet;
     }
 
-    private Pet toPet(AddPetCommandDto petDto) {
+    private Pet toPet(AddPetCommand petDto) {
         Pet pet = new Pet();
-        pet.setOwner( petDtoToOwner( petDto ) );
-        pet.setName( petDto.getName() );
-        pet.setBirthDate( petDto.getBirthDate() );
-        pet.setType( petMapper.toPetType( petDto.getType() ) );
+        pet.setOwner(clinicService.findOwnerById(petDto.ownerId()));
+        pet.setName(petDto.name());
+        pet.setBirthDate(petDto.birthDate());
+        pet.setType(clinicService.findPetTypeById(petDto.typeId()));
         return pet;
-    }
-
-
-    protected Owner petDtoToOwner(AddPetCommandDto petDto) {
-        return clinicService.findOwnerById(petDto.getOwnerId());
     }
 }
