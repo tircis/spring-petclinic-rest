@@ -3,10 +3,12 @@ package org.springframework.samples.petclinic.mapper;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.stream.Collectors;
 import javax.annotation.processing.Generated;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.samples.petclinic.model.Owner;
 import org.springframework.samples.petclinic.model.Pet;
+import org.springframework.samples.petclinic.rest.dto.FoundOwnerDto;
 import org.springframework.samples.petclinic.rest.dto.OwnerDto;
 import org.springframework.samples.petclinic.rest.dto.OwnerFieldsDto;
 import org.springframework.samples.petclinic.rest.dto.PetDto;
@@ -36,6 +38,25 @@ public class OwnerMapperImpl implements OwnerMapper {
         ownerDto.setTelephone( owner.getTelephone() );
         ownerDto.setId( owner.getId() );
         ownerDto.setPets( petListToPetDtoList( owner.getPets() ) );
+
+        return ownerDto;
+    }
+
+    @Override
+    public FoundOwnerDto toFoundOwnerDto(Owner owner) {
+        if ( owner == null ) {
+            return null;
+        }
+
+        FoundOwnerDto ownerDto = new FoundOwnerDto();
+
+        ownerDto.setFirstName( owner.getFirstName() );
+        ownerDto.setLastName( owner.getLastName() );
+        ownerDto.setAddress( owner.getAddress() );
+        ownerDto.setCity( owner.getCity() );
+        ownerDto.setTelephone( owner.getTelephone() );
+        ownerDto.setId( owner.getId() );
+        ownerDto.setPets( owner.getPets().stream().map(Pet::getName).collect(Collectors.toSet()));
 
         return ownerDto;
     }
@@ -85,6 +106,20 @@ public class OwnerMapperImpl implements OwnerMapper {
         List<OwnerDto> list = new ArrayList<OwnerDto>( ownerCollection.size() );
         for ( Owner owner : ownerCollection ) {
             list.add( toOwnerDto( owner ) );
+        }
+
+        return list;
+    }
+
+    @Override
+    public List<FoundOwnerDto> toFoundOwnerDtoCollection(Collection<Owner> ownerCollection) {
+        if ( ownerCollection == null ) {
+            return null;
+        }
+
+        List<FoundOwnerDto> list = new ArrayList<FoundOwnerDto>( ownerCollection.size() );
+        for ( Owner owner : ownerCollection ) {
+            list.add( toFoundOwnerDto( owner ) );
         }
 
         return list;

@@ -22,6 +22,7 @@ import jakarta.validation.constraints.Min;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.samples.petclinic.rest.dto.FoundOwnerDto;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -492,7 +493,7 @@ public interface OwnersApi {
         produces = { "application/json" }
     )
 
-    default ResponseEntity<List<OwnerDto>> listOwners(
+    default ResponseEntity<List<FoundOwnerDto>> listOwners(
         @Parameter(name = "lastName", description = "Last name.", in = ParameterIn.QUERY) @Valid @RequestParam(value = "lastName", required = false) String lastName
     ) {
         getRequest().ifPresent(request -> {

@@ -1,4 +1,4 @@
-# Example 1
+# Example 1: transforming Pet update
 We'll start by transforming the update Pet feature to a CQRS pattern, because the input requires fewer data than the one sent.
 Here's the initial implementation:
 - Looking at the PetRestController, we can see that the updatePet method takes a PetDto as a parameter but uses only the pet name, birthday and type to update the pet.: not the visits
@@ -12,7 +12,7 @@ Here's the initial implementation:
 
 Please note that the UpdateCommandDto.id field is now mandatory.
 
-# Example 2
+# Example 2: transforming Pet creation
 Next one is the "Add Pet" feature.
 Looking at the Front-End, the pet-add.component.html doesn't have any reference to the pet visits, meaning that end users can't create a Pet and creates a visit for him at the same time.
 Whereas the Back-End PetRestController does. Here we have the phenomenon of the automatic exposure of too many attributes to the extra world but outer people don't use them. It certainly have created an extra work during implementation (due to the Visit mapping and persistence) and will do again if we amend the domain entities.
@@ -51,3 +51,14 @@ Until now, we only changed input to make them lighter, and we chose a naming con
 
 Often, the question about the necessity to create DTOs that mirror business `Command`s arises because it seems excessive. However, considering the delete Web operation, we see that we can hardly have a DTO for it since it takes only one integer as parameter, therefore, if you want to embrace the Command pattern on your domain, you have to convert it as a `DeleteCommand`.
 Then, for consistency, it makes sense to convert all `Controller` inputs (DTOs, primitive values) to business `Commands`. The overhead is minimal since `Command` objects are typically simple, and you can use your IDE's features to help with the mapping. If writing the conversion code still feels burdensome, you can employ a Mapper framework to assist with this task.
+
+# Example 3: transforming Owner read
+There are no benefits to transform Pet read operations because its returned class fields (`PetDto`) are all used by the Front-End, therefore, for our exercise, we choose to do it for another entity, Owner, on its search feature. Indeed, looking at the Front-End, the `owner-list.component.html` doesn't have any reference to the `Pet` visits, meaning that we can remove them from the returned type. Let's do it and create a dedicated `FoundOwnerDto`.
+
+# Changes
+- create a copy of `OwnerDto`, named `FoundOwnerDto`
+  - its id is no more optional
+  - annotations for JSON validation are no more necessary
+  - create a local inner class `FoundPetDto` to hold the Pet data: it only contains a `name` field because the Front-End only uses that
+- change `OwnersApi.java` to make `listOwners` take a `FoundOwnerDto` instead of an `OwnerDto`
+- change `OwnerRestController.java` to make it map the result of the search to `FoundOwnerDto` instead of `OwnerDto`. This requires the implementation of the mapping into the `OwnerMapper` class, which is quite simple.

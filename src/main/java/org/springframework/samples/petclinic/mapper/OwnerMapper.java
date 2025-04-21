@@ -3,6 +3,7 @@ package org.springframework.samples.petclinic.mapper;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.springframework.samples.petclinic.model.Owner;
+import org.springframework.samples.petclinic.rest.dto.FoundOwnerDto;
 import org.springframework.samples.petclinic.rest.dto.OwnerDto;
 import org.springframework.samples.petclinic.rest.dto.OwnerFieldsDto;
 
@@ -17,6 +18,8 @@ public interface OwnerMapper {
 
     OwnerDto toOwnerDto(Owner owner);
 
+    FoundOwnerDto toFoundOwnerDto(Owner owner);
+
     Owner toOwner(OwnerDto ownerDto);
 
     @Mapping(target = "id", ignore = true)
@@ -24,6 +27,8 @@ public interface OwnerMapper {
     Owner toOwner(OwnerFieldsDto ownerDto);
 
     List<OwnerDto> toOwnerDtoCollection(Collection<Owner> ownerCollection);
+
+    List<FoundOwnerDto> toFoundOwnerDtoCollection(Collection<Owner> ownerCollection);
 
     Collection<Owner> toOwners(Collection<OwnerDto> ownerDtos);
 }
